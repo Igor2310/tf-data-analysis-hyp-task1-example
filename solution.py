@@ -1,18 +1,16 @@
 import pandas as pd
 import numpy as np
-
-from statsmodels.stats.proportion import proportions_ztest
+from scipy import stats
 
 
 chat_id = 1152225195 # Ваш chat ID, не меняйте название переменной
-
-sgn_lvl = 0.03
 
 def solution(x_success: int, 
              x_cnt: int, 
              y_success: int, 
              y_cnt: int) -> bool:
-    _,p_val = proportions_ztest([x_success,y_success],[x_cnt,y_cnt], alternative = 'smaller')
-    if(p_val > sgn_lvl):
-        return False
-    return True 
+    alpha = 0.3
+    u = stats.norm.ppf((1-alpha)/2+0.5)
+    p_x = x_success / x_cnt
+    p_y = y_success / y_cnt
+    return p_y < p_x - u * np.sqrt(p_x * (1 - p_x) / x_cnt)
